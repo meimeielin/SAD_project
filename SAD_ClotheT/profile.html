@@ -127,7 +127,12 @@
         .profile-stats {
             display: flex;
             justify-content: left;
-            gap: 30px;
+            gap: 60px;
+            font-size: large;
+            border: 1px solid #ddd;
+            /* Add a very light outer border */
+            padding: 10px;
+            border-radius: 5px;
         }
 
         .profile-stats div {
@@ -262,39 +267,41 @@
                     <img src="pictures/User_me.png" alt="個人頭像">
                 </div>
                 <div style="width: 40px;"></div>
-                <div style="display: flex; flex-direction: row;">
-                    <h2 style="margin-right: 10px;">換衣如換皮</h2>
-                    <p style="color:#827c7c; padding-top: 15px;">id:1111111</p>
-                    <div style="width: 40px;"></div>
-                    <div class="button-group">
-                        <button onclick="showEditModal()">Edit profile</button>
-                        <button>View transaction history</button>
+                <!--<div style="display: flex; flex-direction: row;">-->
+                <div>
+                    <div style="display: flex; flex-direction: row;">
+                        <h2 style="margin-right: 10px;">換衣如換皮</h2>
+                        <p style="color:#827c7c; padding-top: 15px;">id:1111111</p>
+                        <div style="width: 40px;"></div>
+                        <div class="button-group">
+                            <button onclick="showEditModal()">Edit profile</button>
+                            <button>View transaction history</button>
+                        </div>
+                    </div>
+                    <div class="profile-stats" style="display: flex; flex-direction: row; justify-content: center;">
+                        <div>
+                            <strong>3</strong><br>
+                            <span>posts</span>
+                        </div>
+                        <div>
+                            <strong>10</strong><br>
+                            <span>followers</span>
+                        </div>
+                        <div>
+                            <strong>427</strong><br>
+                            <span>likes</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-
-            <div class="profile-stats">
-                <div>
-                    <strong>3</strong><br>
-                    <span>posts</span>
-                </div>
-                <div>
-                    <strong>10</strong><br>
-                    <span>followers</span>
-                </div>
-                <div>
-                    <strong>427</strong><br>
-                    <span>likes</span>
-                </div>
-            </div>
 
             <p class="profile-bio" style="text-align: center;">
                 最喜歡冬天～<br>
                 交換的衣服都九成新！<br>
                 住在台北市文山區，歡迎大家和我交換衣服～
             </p>
-        
+
         </div>
 
         <div id="editModal" class="modal">
@@ -304,23 +311,24 @@
                 <div style="padding-top: 5px; padding: 10px; ">
                     <label for="username">New Username:</label>
                     <input type="text" id="username" name="username">
-                    
+
                     <br></br>
                     <label for="userImg">New Image URL:</label>
                     <input type="text" id="userImg" name="userImg">
-                
+
                     <br></br>
                     <label for="uploadImg">Upload New Image:</label>
                     <input type="file" id="uploadImg" name="uploadImg" accept="image/*">
-                        
+
                     <br></br>
                     <label for="uploadImg">Write Something:</label>
                     <br></br>
-                    <textarea id="something" name="something" rows="4" style="width: 100%; resize: vertical;"></textarea>
+                    <textarea id="something" name="something" rows="4"
+                        style="width: 100%; resize: vertical;"></textarea>
                 </div>
                 <button onclick="saveProfile()">Save</button>
             </div>
-        </div>    
+        </div>
 
         <script>
             function showEditModal() {
@@ -377,7 +385,7 @@
                 }
             }
         </script>
-        
+
     </section>
 
     <div style="display: flex; justify-content: center;">
