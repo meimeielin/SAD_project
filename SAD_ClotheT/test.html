@@ -1,0 +1,33 @@
+<!--測試東西用的網站 不用理他-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MySQL Frontend Example</title>
+</head>
+<body>
+    <h1>MySQL Data Fetch</h1>
+    <button id="fetch-data">Fetch Data</button>
+    <div id="data-output"></div>
+
+    <script>
+        document.getElementById('fetch-data').addEventListener('click', () => {
+            // Fetch data from the backend
+            fetch('/api/users')
+                .then(response => response.json())
+                .then(data => {
+                    const output = document.getElementById('data-output');
+                    output.innerHTML = '';
+                    data.forEach(user => {
+                        output.innerHTML += `<p>ID: ${user.id}, Name: ${user.name}</p>`;
+                    });
+                    console.log("嗚呼");
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        });
+    </script>
+</body>
+</html>

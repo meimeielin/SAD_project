@@ -195,21 +195,40 @@
             authForm.innerHTML = `
                 <div class="login-form">
                     <h2>Sign Up</h2>
-                    <input type="text" name="username" placeholder="Username" required>
-                    <select name="gender" required>
+                    <input id="register-name" type="text" name="username" placeholder="Username" required>
+                    <select id="register-gender" name="gender" required>
                         <option value="" disabled selected>Gender</option>
                         <option value="male">Male</option>
                         <option value="female">Female</option>
                         <option value="other">Other</option>
                     </select>
-                    <input type="password" name="password" placeholder="Password" required>
+                    <input id="register-password" type="password" name="password" placeholder="Password" required>
                     <input type="password" name="confirmPassword" placeholder="Confirm Password" required>
-                    <input type="email" name="email" placeholder="Email" required>
-                    <input type="date" name="birthday" placeholder="Birthday" required>
+                    <input id="register-email" type="email" name="email" placeholder="Email" required>
+                    <input id="register-birthday" type="date" name="birthday" placeholder="Birthday" required>
                     <button type="submit">Sign Up</button>
                 </div>
             `;
         });
+
+        async function registerUser() {
+            const name = document.getElementById('register-name').value;
+            const gender = document.getElementById('register-gender').value;
+            const email = document.getElementById('register-email').value;
+            const birthday = document.getElementById('register-birthday').value;
+            const password = document.getElementById('register-password').value;
+
+            try {
+                await fetch(`${apiUrl}/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, gender, email, birthday, password }),
+                });
+                alert('Registration successful');
+            } catch (error) {
+                alert('Error during registration');
+            }
+            }
 
         // 表單提交驗證
         authForm.addEventListener('submit', (event) => {
