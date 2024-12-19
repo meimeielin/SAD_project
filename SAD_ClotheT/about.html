@@ -65,6 +65,17 @@
             height: 100vh; /* Adjusted to make the background image fit the full height of the viewport */
         
         }
+
+        .about-section .container {
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 20px; 
+            max-width: 1200px; 
+            max-height:300px; 
+            margin: 0 auto; 
+        }
+
         .about-section img {
             width: 200px;
             margin-bottom: 20px;
@@ -114,7 +125,7 @@
         <div class="navbar">
             <div class="logo">
                 <a href="index.html">
-                    <img src="pictures/logo.png" alt="Logo" style="height: 40px; width: auto;">
+                    <img src="pictures/logo.png" alt="Logo" style="height: 60px; width: auto;">
                 </a>
             </div>
             <div class="nav-links">
@@ -135,8 +146,8 @@
 
     <main>
         <section class="about-section">
-            <div style="display: flex; align-items: center; justify-content: center; gap: 20px; max-width: 1200px; max-height:300px; margin: 0 auto;">
-                <img src="pictures/about-logo.png" alt="Closet Logo" style="flex: 1; max-width: 300px;">
+            <div class="container">
+                <img src="pictures/logo.png" alt="Closet Logo" style="flex: 1; max-width: 300px;">
                 <div style="flex: 1;"></div>
                 <div>
                     <div style="text-align: left;">
@@ -150,7 +161,7 @@
                 <p> </p>
                 <p> </p>
             </div>
-            <div style="display: flex; align-items: center; justify-content: center; gap: 20px; max-width: 1200px; max-height:300px; margin: 0 auto;">
+            <div class="container" style="margin-left:20;">
                 <div style="flex: 1;"></div>
                 <div>
                     <div style="text-align: left;">
