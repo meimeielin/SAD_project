@@ -121,7 +121,7 @@ app.post('/api/register', async (req, res) => {
     }
   });
 
-  //登入
+  //登入 已完成
   app.post('/api/login', async (req, res) => {
     const { email, password } = req.body;
 
@@ -146,6 +146,65 @@ app.post('/api/register', async (req, res) => {
         res.status(200).send({ message: 'Login successful', userId: user.id });
         });
     });
+
+    //個人頁面
+    app.get('/api/user/:id', (req, res) => {
+        const userId = req.params.id;
+    
+        const query = 'SELECT id, name, image, introduction FROM user WHERE id = ?';
+        db.query(query, [userId], (err, results) => {
+            if (err) {
+                console.error('Database query error:', err);
+                return res.status(500).send('Server error.');
+            }
+    
+            if (results.length === 0) {
+                return res.status(404).send('User not found.');
+            }
+    
+            res.status(200).json(results[0]);
+        });
+    });
+
+    //個人頁面 修改資料
+    app.put('/api/user/:id', (req, res) => {
+        const userId = req.params.id;
+        const { name, image, introduction } = req.body;
+    
+        if (!name && !image && !introduction) {
+            return res.status(400).send('No fields to update');
+        }
+    
+        const fields = [];
+        const values = [];
+        if (name) {
+            fields.push('name = ?');
+            values.push(name);
+        }
+        if (image) {
+            fields.push('image = ?');
+            values.push(image);
+        }
+        if (introduction) {
+            fields.push('introduction = ?');
+            values.push(introduction);
+        }
+        values.push(userId);
+    
+        const query = `UPDATE user SET ${fields.join(', ')} WHERE id = ?`;
+    
+        db.query(query, values, (err, results) => {
+            if (err) {
+                console.error('Error updating user:', err);
+                return res.status(500).send('Error updating user');
+            }
+            if (results.affectedRows === 0) {
+                return res.status(404).send('User not found');
+            }
+            res.send('User updated successfully');
+        });
+    });
+    
 
 
 // 啟動伺服器

@@ -264,14 +264,16 @@
         <div style="display: flex; flex-direction: column; align-items: center;">
             <div style="display: flex; flex-direction: row;">
                 <div>
-                    <img src="pictures/User_me.png" alt="個人頭像">
+                    <img id="profile-image" alt="個人頭像">
                 </div>
                 <div style="width: 40px;"></div>
                 <!--<div style="display: flex; flex-direction: row;">-->
                 <div>
                     <div style="display: flex; flex-direction: row;">
-                        <h2 style="margin-right: 10px;">換衣如換皮</h2>
-                        <p style="color:#827c7c; padding-top: 15px;">id:1111111</p>
+                        <h2 id="profile-name" style="margin-right: 10px;"></h2>
+                        <p style="color:#827c7c; padding-top: 15px;">id:</p>
+                        <p id="profile-id" style="color:#827c7c; padding-top: 15px;"></p>
+                        
                         <div style="width: 40px;"></div>
                         <div class="button-group">
                             <button onclick="showEditModal()">Edit profile</button>
@@ -295,11 +297,8 @@
                 </div>
             </div>
 
-
-            <p class="profile-bio" style="text-align: center;">
-                最喜歡冬天～<br>
-                交換的衣服都九成新！<br>
-                住在台北市文山區，歡迎大家和我交換衣服～
+            <!--注意 記得加自動換行-->
+            <p id="profile-introduction" class="profile-bio" style="text-align: center;">
             </p>
 
         </div>
@@ -326,11 +325,48 @@
                     <textarea id="something" name="something" rows="4"
                         style="width: 100%; resize: vertical;"></textarea>
                 </div>
-                <button onclick="saveProfile()">Save</button>
+                <button id="save-button" type="button">Save</button>
             </div>
         </div>
 
         <script>
+            const userId = sessionStorage.getItem('userId');
+            const saveButton = document.getElementById('save-button');
+            
+            if (!userId) {
+                alert('未登入，請重新登入！');
+                window.location.href = 'login.html';
+            }
+
+            // 從後端獲取用戶資料
+            async function fetchUserProfile() {
+                const apiUrl = `http://localhost:3000/api/user/${userId}`;
+
+                try {
+                    const response = await fetch(apiUrl);
+                    if (!response.ok) {
+                        throw new Error(`Error fetching user profile: ${response.status}`);
+                    }
+
+                    const user = await response.json();
+
+                    // 渲染用戶資料
+                    document.getElementById('profile-name').textContent = user.name || 'No Name';
+                    document.getElementById('profile-id').textContent = user.id || 'Unknown ID';
+                    document.getElementById('profile-introduction').textContent = user.introduction || '快輸入自我介紹讓別人可以更加認識你吧！';
+
+                    // 設置用戶圖片
+                    const profileImage = document.getElementById('profile-image');
+                    profileImage.src = user.image || 'pictures/User_me.png';
+                } catch (error) {
+                    console.error('Error loading profile:', error);
+                    alert('無法載入用戶資料，請稍後再試。');
+                }
+            }
+
+            // 加載用戶資料
+            fetchUserProfile();
+
             function showEditModal() {
                 document.getElementById('editModal').style.display = "block";
             }
@@ -339,23 +375,15 @@
                 document.getElementById('editModal').style.display = "none";
             }
 
-            function saveProfile() {
-                let newUsername = document.getElementById('username').value;
-                let newUserImg = document.getElementById('userImg').value;
+            saveButton.addEventListener('click', async () => {
+                let name = document.getElementById('username').value;
+                let image = document.getElementById('userImg').value;
                 let uploadImg = document.getElementById('uploadImg').files[0];
-                let something = document.getElementById('something').value;
+                let introduction = document.getElementById('something').value;
 
-                if (newUsername) {
-                    document.querySelector('.profile-container h2').textContent = newUsername;
-                }
-
-                if (newUserImg && uploadImg) {
+                if (image && uploadImg) {
                     alert("Please only input one image URL or upload one image.");
                     return;
-                }
-
-                if (newUserImg) {
-                    document.querySelector('.profile-container img').src = newUserImg;
                 }
 
                 if (uploadImg) {
@@ -365,18 +393,37 @@
                     }
                     reader.readAsDataURL(uploadImg);
                 }
-
-                if (something) {
-                    document.querySelector('.profile-bio').textContent = something;
-                }
-
+                
                 if (confirm("Are you sure you want to save the changes?")) {
-                    // Save changes
+                    try {
+                        const response = await fetch(`http://localhost:3000/api/user/${userId}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ name, image, introduction }),
+                        });
+
+                        if (!response.ok) {
+                            const errorData = await response.json();
+                            alert(`Update failed: ${errorData.message}`);
+                            return;
+                        }
+
+                        alert('成功更新資料!');
+
+                        // 更新內容
+                        document.getElementById('profile-name').textContent = name || document.getElementById('profile-name').textContent;
+                        document.getElementById('profile-image').src = image || document.getElementById('profile-image').src;
+                        document.getElementById('profile-introduction').textContent = introduction || document.getElementById('profile-introduction').textContent;
+
+                    } catch (error) {
+                        console.error('Error updating profile:', error);
+                        alert('An error occurred while updating the profile.');
+                    }
                 } else {
                     return;
                 }
                 closeEditModal();
-            }
+            });
 
             window.onclick = function (event) {
                 let modal = document.getElementById('editModal');
@@ -384,6 +431,8 @@
                     modal.style.display = "none";
                 }
             }
+
+            
         </script>
 
     </section>

@@ -174,8 +174,6 @@
         const loginBtn = document.getElementById('loginBtn');
         const signUpBtn = document.getElementById('signUpBtn');
 
-        let userId = 113000;
-
         const apiUrl = 'http://localhost:3000/api';
 
         // 動態切換內容
@@ -284,7 +282,7 @@
                 const data = await response.json();
                 alert('登入成功！');
                 console.log('User ID:', data.userId);
-                userId = data.userId;
+                sessionStorage.setItem('userId', data.userId);
                 window.location.href = 'index.html';
 
             } catch (error) {
