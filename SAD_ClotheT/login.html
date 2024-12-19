@@ -174,6 +174,10 @@
         const loginBtn = document.getElementById('loginBtn');
         const signUpBtn = document.getElementById('signUpBtn');
 
+        let userId = 113000;
+
+        const apiUrl = 'http://localhost:3000/api';
+
         // 動態切換內容
         loginBtn.addEventListener('click', () => {
             authForm.innerHTML = `
@@ -203,12 +207,17 @@
                         <option value="other">Other</option>
                     </select>
                     <input id="register-password" type="password" name="password" placeholder="Password" required>
-                    <input type="password" name="confirmPassword" placeholder="Confirm Password" required>
+                    <input id="register-confirm-password" type="password" name="confirmPassword" placeholder="Confirm Password" required>
                     <input id="register-email" type="email" name="email" placeholder="Email" required>
                     <input id="register-birthday" type="date" name="birthday" placeholder="Birthday" required>
-                    <button type="submit">Sign Up</button>
+                    <button id="submit-register" type="submit">Sign Up</button>
                 </div>
             `;
+
+            document.getElementById('submit-register').addEventListener('click', (event) => {
+                event.preventDefault();
+                registerUser();
+            });
         });
 
         async function registerUser() {
@@ -217,44 +226,36 @@
             const email = document.getElementById('register-email').value;
             const birthday = document.getElementById('register-birthday').value;
             const password = document.getElementById('register-password').value;
-
-            try {
-                await fetch(`${apiUrl}/register`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, gender, email, birthday, password }),
-                });
-                alert('Registration successful');
-            } catch (error) {
-                alert('Error during registration');
-            }
-            }
-
-        // 表單提交驗證
-        authForm.addEventListener('submit', (event) => {
-            event.preventDefault(); // 阻止默認提交行為
-
-            const password = authForm.querySelector('input[name="password"]').value;
-            const confirmPassword = authForm.querySelector('input[name="confirmPassword"]');
+            const confirmPassword = document.getElementById('register-confirm-password').value;
             
-            // 密碼比對
-            if (confirmPassword && password !== confirmPassword.value) {
-                alert('Passwords do not match');
+
+            if (!name || !gender || !email || !birthday || !password || !confirmPassword) {
+                alert('請填寫所有欄位');
                 return;
             }
 
-            // 檢查所有必填字段
-            const inputs = authForm.querySelectorAll('input[required], select[required]');
-            for (let input of inputs) {
-                if (!input.value) {
-                    alert('Please fill out all required fields');
-                    return;
-                }
+            if (password !== confirmPassword) {
+                alert('密碼確認錯誤');
+                return;
             }
 
-            alert('Form submitted successfully');
-            window.location.href = 'index.html'; // 跳轉到主頁
-        });
+            const response = await fetch(`${apiUrl}/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, gender, email, birthday, password }),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                alert(`註冊失敗: ${errorData.message}`);
+                return;
+            }
+
+            alert('已成功註冊！');
+            window.location.href = 'login.html'; // 跳轉到主頁
+        }
+
+
     </script>
     
 </body>
