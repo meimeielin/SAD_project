@@ -79,7 +79,7 @@ app.put('/api/user', (req, res) => {
     });
 });
 
-//註冊
+//註冊 已完成
 app.post('/api/register', async (req, res) => {
     const { name, email, password, gender, birthday, image, introduction } = req.body;
 
@@ -120,6 +120,32 @@ app.post('/api/register', async (req, res) => {
         res.status(500).send('Server error.');
     }
   });
+
+  //登入
+  app.post('/api/login', async (req, res) => {
+    const { email, password } = req.body;
+
+    const query = 'SELECT * FROM user WHERE email = ?';
+    db.query(query, [email], async (err, results) => {
+        if (err) {
+            console.error('Database query error:', err);
+            return res.status(500).send('Server error.');
+        }
+
+        if (results.length === 0) {
+            return res.status(404).send('User not found.');
+        }
+
+        const user = results[0];
+        const passwordMatch = await bcrypt.compare(password, user.password);
+
+        if (!passwordMatch) {
+            return res.status(401).send('Invalid email or password.');
+        }
+
+        res.status(200).send({ message: 'Login successful', userId: user.id });
+        });
+    });
 
 
 // 啟動伺服器

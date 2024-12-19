@@ -183,16 +183,20 @@
             authForm.innerHTML = `
                 <div class="login-form">    
                     <h2>Login</h2>
-                    <input type="text" name="username" placeholder="Username" required>
-                    <input type="email" name="email" placeholder="Email" required>
-                    <input type="password" name="password" placeholder="Password" required>
+                    <input id="login-email" type="email" name="email" placeholder="Email" required>
+                    <input id="login-password" type="password" name="password" placeholder="Password" required>
                     <div>
                         <input type="checkbox" id="rememberMe">
                         <label for="rememberMe">Remember Me</label>
                     </div>
-                        <button type="submit">Login</button>
+                        <button id="submit-login" type="submit">Login</button>
                 </div>
             `;
+
+            document.getElementById('submit-login').addEventListener('click', (event) => {
+                event.preventDefault();
+                loginUser();
+            });
         });
 
         signUpBtn.addEventListener('click', () => {
@@ -253,6 +257,40 @@
 
             alert('已成功註冊！');
             window.location.href = 'login.html'; // 跳轉到主頁
+        }
+
+        async function loginUser() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            if (!email || !password) {
+                alert('請填寫所有欄位!');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${apiUrl}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password }),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    alert(`登入失敗: ${errorData.message}`);
+                    return;
+                }
+
+                const data = await response.json();
+                alert('登入成功！');
+                console.log('User ID:', data.userId);
+                userId = data.userId;
+                window.location.href = 'index.html';
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('發生錯誤，請稍後再試');
+            }
         }
 
 
