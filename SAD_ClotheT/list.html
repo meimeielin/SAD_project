@@ -227,14 +227,6 @@
             background-color: #af6dc5;
         }
 
-
-
-
-
-
-
-
-
         .container {
             margin-top: 50px;
         }
@@ -297,11 +289,6 @@
         }
 
 
-        
-    
-
-
-
         .cart-item {
             padding: 15px 0;
             border-bottom: 1px solid #ccc;
@@ -352,16 +339,6 @@
     </header>
 
 
-
-
-
-
-
-
-
-
-
-
     <div class="container">
         <div class="title">
             <p>Item</p>
@@ -374,22 +351,31 @@
             <p><img src="pictures/jeans.jpg" alt="Product ABC"></p>
             <p>Slim fit jeans (blue)</p>
             <p> <button class="buy-btn">Exchange</button></p>
-            <p><button class="delete-btn">Delete</button></p>
+            <p><button class="delete-btn" onclick="confirmDelete(this)">Delete</button></p>
         </div>
         <div class="product-list">
             <p><img src="pictures/skirt.png" alt="Product DEF"></p>
             <p>Denim high-waisted slimming A-line skirt (light blue)</p>
             <p class="p1">No more items </p>
-            <p><button class="delete-btn">Delete</button></p>
+            <p><button class="delete-btn" onclick="confirmDelete(this)">Delete</button></p>
         </div>
         <div class="product-list">
             <p><img src="pictures/necklace.png" alt="Product GHI"></p>
             <p>Silver necklace</p>
             <p><button class="buy-btn">Exchange</button></p>
-            <p><button class="delete-btn">Delete</button></p>
+            <p><button class="delete-btn" onclick="confirmDelete(this)">Delete</button></p>
         </div>
         
     </div>
+
+    <script>
+        function confirmDelete(btn) {
+            if (confirm("Are you sure you want to delete this item?")) {
+                btn.parentElement.parentElement.remove();
+            }
+        }
+    </script>
+
 
     
 </body>

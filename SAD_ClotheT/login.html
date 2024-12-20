@@ -174,21 +174,27 @@
         const loginBtn = document.getElementById('loginBtn');
         const signUpBtn = document.getElementById('signUpBtn');
 
+        const apiUrl = 'http://localhost:3000/api';
+
         // 動態切換內容
         loginBtn.addEventListener('click', () => {
             authForm.innerHTML = `
                 <div class="login-form">    
                     <h2>Login</h2>
-                    <input type="text" name="username" placeholder="Username" required>
-                    <input type="email" name="email" placeholder="Email" required>
-                    <input type="password" name="password" placeholder="Password" required>
+                    <input id="login-email" type="email" name="email" placeholder="Email" required>
+                    <input id="login-password" type="password" name="password" placeholder="Password" required>
                     <div>
                         <input type="checkbox" id="rememberMe">
                         <label for="rememberMe">Remember Me</label>
                     </div>
-                        <button type="submit">Login</button>
+                        <button id="submit-login" type="submit">Login</button>
                 </div>
             `;
+
+            document.getElementById('submit-login').addEventListener('click', (event) => {
+                event.preventDefault();
+                loginUser();
+            });
         });
 
         signUpBtn.addEventListener('click', () => {
@@ -203,12 +209,17 @@
                         <option value="other">Other</option>
                     </select>
                     <input id="register-password" type="password" name="password" placeholder="Password" required>
-                    <input type="password" name="confirmPassword" placeholder="Confirm Password" required>
+                    <input id="register-confirm-password" type="password" name="confirmPassword" placeholder="Confirm Password" required>
                     <input id="register-email" type="email" name="email" placeholder="Email" required>
                     <input id="register-birthday" type="date" name="birthday" placeholder="Birthday" required>
-                    <button type="submit">Sign Up</button>
+                    <button id="submit-register" type="submit">Sign Up</button>
                 </div>
             `;
+
+            document.getElementById('submit-register').addEventListener('click', (event) => {
+                event.preventDefault();
+                registerUser();
+            });
         });
 
         async function registerUser() {
@@ -217,44 +228,70 @@
             const email = document.getElementById('register-email').value;
             const birthday = document.getElementById('register-birthday').value;
             const password = document.getElementById('register-password').value;
-
-            try {
-                await fetch(`${apiUrl}/register`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, gender, email, birthday, password }),
-                });
-                alert('Registration successful');
-            } catch (error) {
-                alert('Error during registration');
-            }
-            }
-
-        // 表單提交驗證
-        authForm.addEventListener('submit', (event) => {
-            event.preventDefault(); // 阻止默認提交行為
-
-            const password = authForm.querySelector('input[name="password"]').value;
-            const confirmPassword = authForm.querySelector('input[name="confirmPassword"]');
+            const confirmPassword = document.getElementById('register-confirm-password').value;
             
-            // 密碼比對
-            if (confirmPassword && password !== confirmPassword.value) {
-                alert('Passwords do not match');
+
+            if (!name || !gender || !email || !birthday || !password || !confirmPassword) {
+                alert('請填寫所有欄位');
                 return;
             }
 
-            // 檢查所有必填字段
-            const inputs = authForm.querySelectorAll('input[required], select[required]');
-            for (let input of inputs) {
-                if (!input.value) {
-                    alert('Please fill out all required fields');
-                    return;
-                }
+            if (password !== confirmPassword) {
+                alert('密碼確認錯誤');
+                return;
             }
 
-            alert('Form submitted successfully');
-            window.location.href = 'index.html'; // 跳轉到主頁
-        });
+            const response = await fetch(`${apiUrl}/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, gender, email, birthday, password }),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                alert(`註冊失敗: ${errorData.message}`);
+                return;
+            }
+
+            alert('已成功註冊！');
+            window.location.href = 'login.html'; // 跳轉到主頁
+        }
+
+        async function loginUser() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            if (!email || !password) {
+                alert('請填寫所有欄位!');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${apiUrl}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password }),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    alert(`登入失敗: ${errorData.message}`);
+                    return;
+                }
+
+                const data = await response.json();
+                alert('登入成功！');
+                console.log('User ID:', data.userId);
+                sessionStorage.setItem('userId', data.userId);
+                window.location.href = 'index.html';
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('發生錯誤，請稍後再試');
+            }
+        }
+
+
     </script>
     
 </body>
