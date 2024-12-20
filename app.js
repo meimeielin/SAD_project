@@ -147,7 +147,7 @@ app.post('/api/register', async (req, res) => {
         });
     });
 
-    //個人頁面
+    //個人頁面 已完成
     app.get('/api/user/:id', (req, res) => {
         const userId = req.params.id;
     
@@ -166,7 +166,7 @@ app.post('/api/register', async (req, res) => {
         });
     });
 
-    //個人頁面 修改資料
+    //個人頁面 修改資料 已完成
     app.put('/api/user/:id', (req, res) => {
         const userId = req.params.id;
         const { name, image, introduction } = req.body;
