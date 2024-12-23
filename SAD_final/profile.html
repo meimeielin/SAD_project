@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <style>
+        body {
+            font-family: serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f3f7;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            /* 改變對齊方式，讓內容向左緊靠 */
+            background: linear-gradient(to right, #d9c2e6, #b19cd9);
+            padding: 10px 20px;
+            gap: 10px;
+            /* 增加小的間距控制元素間距 */
+        }
+
+        .navbar a {
+            text-decoration: none;
+            color: #000;
+            margin: 0 10px;
+            /* Reduced margin to narrow the space between divs */
+            font-size: 1.1em;
+        }
+
+        .navbar a:hover {
+            color: #555;
+        }
+
+        .navbar .search-bar {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar input {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .navbar img {
+            width: 24px;
+            height: 24px;
+            margin-left: 10px;
+        }
+
+        .search-bar img[alt="YourList"],
+        .search-bar img[alt="Profile"] {
+            width: 32px;
+            /* 調整為比搜尋圖標大的尺寸 */
+            height: 32px;
+        }
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-top: 0;
+            /* Remove margin to eliminate white space */
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            /* Adjusted to make the background image fit the full height of the viewport */
+            text-align: center;
+            position: relative;
+        }
+
+        .content::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            /* 60% opacity */
+            z-index: 0;
+        }
+
+        .content h1,
+        .content p {
+            position: relative;
+            z-index: 2;
+            color: white;
+        }
+
+        .content h1 {
+            font-size: 3em;
+            margin-bottom: 30px;
+        }
+
+        .content p {
+            font-size: 1.2em;
+        }
+
+        .search-bar {
+            margin-left: auto;
+            /* 確保 search-bar 始終在右側 */
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            /* 控制 search input 和圖標間距 */
+        }
+    </style>
+    <style>
+        .profile-container {
+            padding: 50px 30px;
+        }
+
+        .profile-container img {
+            border-radius: 50%;
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .profile-stats {
+            display: flex;
+            justify-content: left;
+            gap: 30px;
+        }
+
+        .profile-stats div {
+            text-align: center;
+        }
+
+        .profile-bio {
+            margin: 15px 0;
+            font-size: 16px;
+        }
+
+        .button-group button {
+            margin-top: 15px;
+            padding: 10px 15px;
+            border: 2px solid rgb(150, 124, 182);
+            /* 紫色邊框 */
+            background-color: transparent;
+            /* 背景透明 */
+            color: rgb(150, 124, 182);
+            /* 文字顏色紫色 */
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .posts {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 30px;
+        }
+
+        .posts img {
+            width: 300px;
+            height: 300px;
+            object-fit: cover;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+        }
+
+        .profile-container .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.4);
+            border-radius: 10px;
+        }
+
+
+        .profile-container .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 5px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 10px;
+        }
+
+        .profile-container .modal-content h2 {
+            color: white;
+            background: linear-gradient(to right, #d9c2e6, #b19cd9);
+            padding: 10px;
+            margin-top: 0px;
+            border-radius: 5px;
+        }
+
+        .profile-container .modal-content button {
+            margin-top: 20px;
+            margin-left: 430px;
+            padding: 10px 20px;
+            border: none;
+            background-color: rgb(199, 173, 231);
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: serif;
+
+        }
+
+        .profile-container .close {
+            color: #aaa;
+            float: right;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .profile-container .close:hover,
+        .profile-container .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="navbar">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="pictures/logo.png" alt="Logo" style="height: 40px; width: auto;">
+                </a>
+            </div>
+            <div class="nav-links">
+                <a href="about.html" style="color:azure">About us</a>
+                <a href="shopping.html" style="color:azure">Go shopping</a>
+            </div>
+            <div class="search-bar">
+                <input type="text" placeholder="Search...">
+                <img src="pictures/search-icon.png" alt="Search">
+                <a href="list.html">
+                    <img src="pictures/yourlist.png" alt="YourList"> </a>
+                <a href="profile.html">
+                    <img src="pictures/profile.png" alt="Profile"> </a>
+
+            </div>
+        </div>
+    </header>
+
+    <section class="profile-container">
+        <!-- Profile picture, name, and bio -->
+        <div style="display: flex; flex-direction: column; align-items: center;">
+            <div style="display: flex; flex-direction: row;">
+                <div>
+                    <img src="pictures/User_me.png" alt="個人頭像">
+                </div>
+                <div style="width: 40px;"></div>
+                <div style="display: flex; flex-direction: row;">
+                    <h2 style="margin-right: 10px;">換衣如換皮</h2>
+                    <p style="color:#827c7c; padding-top: 15px;">id:1111111</p>
+                    <div style="width: 40px;"></div>
+                    <div class="button-group">
+                        <button onclick="showEditModal()">Edit profile</button>
+                        <button>View transaction history</button>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="profile-stats">
+                <div>
+                    <strong>3</strong><br>
+                    <span>posts</span>
+                </div>
+                <div>
+                    <strong>10</strong><br>
+                    <span>followers</span>
+                </div>
+                <div>
+                    <strong>427</strong><br>
+                    <span>likes</span>
+                </div>
+            </div>
+
+            <p class="profile-bio" style="text-align: center;">
+                最喜歡冬天～<br>
+                交換的衣服都九成新！<br>
+                住在台北市文山區，歡迎大家和我交換衣服～
+            </p>
+        
+        </div>
+
+        <div id="editModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeEditModal()">&times;</span>
+                <h2>Edit Profile</h2>
+                <div style="padding-top: 5px; padding: 10px; ">
+                    <label for="username">New Username:</label>
+                    <input type="text" id="username" name="username">
+                    
+                    <br></br>
+                    <label for="userImg">New Image URL:</label>
+                    <input type="text" id="userImg" name="userImg">
+                
+                    <br></br>
+                    <label for="uploadImg">Upload New Image:</label>
+                    <input type="file" id="uploadImg" name="uploadImg" accept="image/*">
+                        
+                    <br></br>
+                    <label for="uploadImg">Write Something:</label>
+                    <br></br>
+                    <textarea id="something" name="something" rows="4" style="width: 100%; resize: vertical;"></textarea>
+                </div>
+                <button onclick="saveProfile()">Save</button>
+            </div>
+        </div>    
+
+        <script>
+            function showEditModal() {
+                document.getElementById('editModal').style.display = "block";
+            }
+
+            function closeEditModal() {
+                document.getElementById('editModal').style.display = "none";
+            }
+
+            function saveProfile() {
+                let newUsername = document.getElementById('username').value;
+                let newUserImg = document.getElementById('userImg').value;
+                let uploadImg = document.getElementById('uploadImg').files[0];
+                let something = document.getElementById('something').value;
+
+                if (newUsername) {
+                    document.querySelector('.profile-container h2').textContent = newUsername;
+                }
+
+                if (newUserImg && uploadImg) {
+                    alert("Please only input one image URL or upload one image.");
+                    return;
+                }
+
+                if (newUserImg) {
+                    document.querySelector('.profile-container img').src = newUserImg;
+                }
+
+                if (uploadImg) {
+                    let reader = new FileReader();
+                    reader.onload = function (e) {
+                        document.querySelector('.profile-container img').src = e.target.result;
+                    }
+                    reader.readAsDataURL(uploadImg);
+                }
+
+                if (something) {
+                    document.querySelector('.profile-bio').textContent = something;
+                }
+
+                if (confirm("Are you sure you want to save the changes?")) {
+                    // Save changes
+                } else {
+                    return;
+                }
+                closeEditModal();
+            }
+
+            window.onclick = function (event) {
+                let modal = document.getElementById('editModal');
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            }
+        </script>
+        
+    </section>
+
+    <div style="display: flex; justify-content: center;">
+        <img src="pictures/divline.png" alt="line" style="width: 80%; margin-top: px;">
+    </div>
+
+    <section class="posts">
+        <a href="productinfo.html?image=pictures/sweater1.png&title=Blue+Sweater">
+            <img src="pictures/sweater1.png" alt="Blue Sweater">
+        </a>
+        <a href="productinfo.html?image=pictures/boots1.png&title=Boots">
+            <img src="pictures/boots1.png" alt="Boots">
+        </a>
+        <a href="productinfo.html?image=pictures/pants1.png&title=Pants">
+            <img src="pictures/pants1.png" alt="Pants">
+        </a>
+    </section>
+
+</body>
+
+</html>
